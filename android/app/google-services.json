@@ -1,39 +1,124 @@
 {
   "project_info": {
-    "project_number": "347976604232",
-    "firebase_url": "https://flutterchatdemo.firebaseio.com",
-    "project_id": "flutterchatdemo",
-    "storage_bucket": "flutterchatdemo.appspot.com"
+    "project_number": "222330089001",
+    "firebase_url": "https://nusanonymous-ed97b.firebaseio.com",
+    "project_id": "nusanonymous-ed97b",
+    "storage_bucket": "nusanonymous-ed97b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:347976604232:android:5e864cb592d93aaa",
+        "mobilesdk_app_id": "1:222330089001:android:d5f1d3bda0b3f07bb23638",
         "android_client_info": {
-          "package_name": "com.dfa.flutterchatdemo"
+          "package_name": "com.NUSAnonymous.NUSAnonymous"
         }
       },
       "oauth_client": [
         {
-          "client_id": "347976604232-k6p3475tsg23qhdgtdjqlb952udl5p9g.apps.googleusercontent.com",
+          "client_id": "222330089001-85uplcn92lsodtf0s17bof9cl7d065mo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.NUSAnonymous.NUSAnonymous",
+            "certificate_hash": "0d8a209fe8bffd3f0ec3993657ebdb52b5bcb309"
+          }
+        },
+        {
+          "client_id": "222330089001-nma1fmm1v8sk0oejhopq5ngrmuhpha1b.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBoAoZZDb5Mzf8C8WUU6r9WHZvFWmusGN8"
+          "current_key": "AIzaSyBf9LgheWNOi-fIO9jLLEgpBRpbTbdb7ZI"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "222330089001-nma1fmm1v8sk0oejhopq5ngrmuhpha1b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "222330089001-lf4aqvpk0vvck240tooqfrvtaeo91q7m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hacknroll.example.anonymousappios"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222330089001:android:648f1c0ab855e150b23638",
+        "android_client_info": {
+          "package_name": "com.flutter.firebase.example.nusanonymous"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222330089001-nma1fmm1v8sk0oejhopq5ngrmuhpha1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf9LgheWNOi-fIO9jLLEgpBRpbTbdb7ZI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "222330089001-nma1fmm1v8sk0oejhopq5ngrmuhpha1b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "222330089001-lf4aqvpk0vvck240tooqfrvtaeo91q7m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hacknroll.example.anonymousappios"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222330089001:android:719f5be9e766e822b23638",
+        "android_client_info": {
+          "package_name": "com.flutter.firebase.nusanonymous"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222330089001-nma1fmm1v8sk0oejhopq5ngrmuhpha1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf9LgheWNOi-fIO9jLLEgpBRpbTbdb7ZI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "222330089001-nma1fmm1v8sk0oejhopq5ngrmuhpha1b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "222330089001-lf4aqvpk0vvck240tooqfrvtaeo91q7m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hacknroll.example.anonymousappios"
+              }
+            }
+          ]
         }
       }
     }
