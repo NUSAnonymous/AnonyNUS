@@ -87,7 +87,7 @@ class MainScreenState extends State<MainScreen> {
 
   void showNotification(message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.NUSAnonymous.NUSAnonymous': 'com.duytq.flutterchatdemo',
+      Platform.isAndroid ? 'com.NUSAnonymous.NUSAnonymous': 'com.hacknroll.example.anonymousappios',
       'AnonyNUS Chat',
       'A message has arrived!',
       playSound: true,
