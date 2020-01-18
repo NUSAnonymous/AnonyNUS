@@ -87,9 +87,9 @@ class MainScreenState extends State<MainScreen> {
 
   void showNotification(message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.dfa.flutterchatdemo': 'com.duytq.flutterchatdemo',
-      'Flutter chat demo',
-      'your channel description',
+      Platform.isAndroid ? 'com.NUSAnonymous.NUSAnonymous': 'com.duytq.flutterchatdemo',
+      'AnonyNUS Chat',
+      'A message has arrived!',
       playSound: true,
       enableVibration: true,
       importance: Importance.Max,
@@ -214,7 +214,7 @@ class MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'MAIN',
+          'ROOMS',
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
