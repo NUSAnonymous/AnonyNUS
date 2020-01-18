@@ -15,6 +15,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'groupManager.dart';
+import 'groups.dart';
+
 void main() => runApp(MyApp());
 
 class MainScreen extends StatefulWidget {
@@ -37,7 +40,9 @@ class MainScreenState extends State<MainScreen> {
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
     const Choice(title: 'Settings', icon: Icons.settings),
+    const Choice(title: 'Groups', icon: Icons.group),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
+    const Choice(title: 'Create Group', icon: Icons.create),
   ];
 
   @override
@@ -78,10 +83,27 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void onItemMenuPress(Choice choice) {
-    if (choice.title == 'Log out') {
+    switch (choice.title) {
+      case 'Create Group':
+      {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => GroupManager()));
+      break;
+      }
+      case 'Groups':
+      {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Groups()));
+      break;
+      }
+      case 'Log out':
+      {
       handleSignOut();
-    } else {
+      break;
+      }
+      case 'Settings':
+      {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+      break;
+      }
     }
   }
 
