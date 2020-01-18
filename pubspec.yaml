@@ -22,6 +22,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.7.4
+
+flutter_icons:
+  image_path: 'images/logoLarge.png'
+  android: true
+  ios: true
 
 flutter:
   uses-material-design: true
@@ -38,3 +44,5 @@ flutter:
      - images/mimi8.gif
      - images/mimi9.gif
      - images/person.png
+     - images/logoLarge.png
+     - images/logo2.png

@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: themeColor,
       ),
-      home: LoginScreen(title: 'SIGN IN', auth: new Auth()),
+      home: LoginScreen(title: 'Welcome to AnonyNUS', auth: new Auth()),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -75,22 +75,6 @@ class LoginScreenState extends State<LoginScreen> {
     });
     setState(() {
       authStatus = AuthStatus.LOGGED_IN;
-    });
-  }
-
-  Widget _buildWaitingScreen() {
-    return Scaffold(
-      body: Container(
-        alignment: Alignment.center,
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  void _onSignedOut() {
-    setState(() {
-      authStatus = AuthStatus.NOT_LOGGED_IN;
-      _userId = "";
     });
   }
 
@@ -200,6 +184,12 @@ class LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  Image(image: AssetImage('images/logo2.png')),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 100),
+                    child: Text('AnonyNUS is an online chat platform for NUS students from the same modules/courses to share resources, discuss work and make friends anonymously.',
+                    style: TextStyle(fontSize: 17, color: Colors.black.withOpacity(0.8)))
+                  ),
                   FlatButton(
                     onPressed: handleSignIn,
                     child: Text(
@@ -223,7 +213,7 @@ class LoginScreenState extends State<LoginScreen> {
                       'SIGN IN WITH PASSWORD',
                       style: TextStyle(fontSize: 16.0),
                     ),
-                    color: Color(0xffdd4b39),
+                    color: Color(0xff004696),
                     highlightColor: Color(0xffff7f7f),
                     splashColor: Colors.transparent,
                     textColor: Colors.white,
@@ -232,7 +222,6 @@ class LoginScreenState extends State<LoginScreen> {
                 ]
               ),
             ),
-
 
             // Loading
             Positioned(
