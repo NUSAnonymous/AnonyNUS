@@ -22,17 +22,19 @@ void main() => runApp(MyApp());
 
 class MainScreen extends StatefulWidget {
   final String currentUserId;
+  final bool inByGoogle;
 
-  MainScreen({Key key, @required this.currentUserId}) : super(key: key);
+  MainScreen({Key key, @required this.currentUserId, this.inByGoogle}) : super(key: key);
 
   @override
-  State createState() => MainScreenState(currentUserId: currentUserId);
+  State createState() => MainScreenState(currentUserId: currentUserId, inByGoogle: inByGoogle);
 }
 
 class MainScreenState extends State<MainScreen> {
-  MainScreenState({Key key, @required this.currentUserId});
+  MainScreenState({Key key, @required this.currentUserId, this.inByGoogle});
 
   final String currentUserId;
+  final bool inByGoogle;
   final FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -150,7 +152,7 @@ class MainScreenState extends State<MainScreen> {
                         size: 30.0,
                         color: Colors.white,
                       ),
-                      margin: EdgeInsets.only(bottom: 10.0),
+                      margin: EdgeInsets.only(bottom: 9.0),
                     ),
                     Text(
                       'Exit app',
@@ -220,8 +222,10 @@ class MainScreenState extends State<MainScreen> {
     });
 
     await FirebaseAuth.instance.signOut();
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
+    if (inByGoogle) {
+      await googleSignIn.disconnect();
+      await googleSignIn.signOut();
+    }
 
     this.setState(() {
       isLoading = false;
@@ -319,7 +323,7 @@ class MainScreenState extends State<MainScreen> {
           child: Row(
             children: <Widget>[
               Material(
-                child: document['photoUrl'] != null
+                child: document['photoUrl'] != ''
                     ? CachedNetworkImage(
                         placeholder: (context, url) => Container(
                           child: CircularProgressIndicator(
