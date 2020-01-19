@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_demo/addContact.dart';
 import 'package:flutter_chat_demo/chat.dart';
 import 'package:flutter_chat_demo/const.dart';
 import 'package:flutter_chat_demo/login.dart';
@@ -36,6 +37,7 @@ class MainScreenState extends State<MainScreen> {
 
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
+    const Choice(title: 'Add Contact', icon: Icons.contacts),
     const Choice(title: 'Settings', icon: Icons.settings),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
   ];
@@ -51,14 +53,14 @@ class MainScreenState extends State<MainScreen> {
     firebaseMessaging.requestNotificationPermissions();
 
     firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
-      print('onMessage: $message');
+      // print('onMessage: $message');
       showNotification(message['notification']);
       return;
     }, onResume: (Map<String, dynamic> message) {
-      print('onResume: $message');
+      // print('onResume: $message');
       return;
     }, onLaunch: (Map<String, dynamic> message) {
-      print('onLaunch: $message');
+      // print('onLaunch: $message');
       return;
     });
 
@@ -80,6 +82,8 @@ class MainScreenState extends State<MainScreen> {
   void onItemMenuPress(Choice choice) {
     if (choice.title == 'Log out') {
       handleSignOut();
+    } else if (choice.title == 'Add Contact') {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AddContact()));
     } else {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
     }
@@ -94,13 +98,20 @@ class MainScreenState extends State<MainScreen> {
       enableVibration: true,
       importance: Importance.Max,
       priority: Priority.High,
+      channelShowBadge: true, 
+      enableLights: true
     );
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true
+    );
     var platformChannelSpecifics =
         new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, message['title'].toString(), message['body'].toString(), platformChannelSpecifics,
-        payload: json.encode(message));
+        payload: 'Alert');
+        //json.encode(message)
   }
 
   Future<bool> onBackPress() {
@@ -335,7 +346,7 @@ class MainScreenState extends State<MainScreen> {
                       ),
                       Container(
                         child: Text(
-                          'About me: ${document['aboutMe'] ?? 'Not available'}',
+                          'About me: ${document['aboutMe'] ?? ':)'}',
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,
