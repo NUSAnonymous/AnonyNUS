@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_demo/groupChat.dart';
 
 import 'const.dart';
 
@@ -31,6 +32,10 @@ class GroupChatList extends StatelessWidget {
           children: snapshot.data.documents.map((document) {
             return new ListTile(
               title: new Text(document['title']),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) 
+              => GroupChat(groupID: document.documentID)));
+              }
             );
           }).toList(),
         );

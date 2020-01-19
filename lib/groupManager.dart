@@ -66,6 +66,8 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
   // Define the focus node. To manage the lifecycle, create the FocusNode in
   // the initState method, and clean it up in the dispose method.
   FocusNode myFocusNode;
+  String title = '';
+  String description = '';
 
   @override
   void initState() {
@@ -82,6 +84,13 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
     super.dispose();
   }
 
+  void handleSubmit(String title, String description) {
+    Firestore.instance.collection('groups').document()
+    .setData({ 'title': title, 'description': description });
+  }
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,6 +104,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
                 // The first text field is focused on as soon as the app starts.
                 TextField(
                   autofocus: true,
+                  controller: titleController
                 ),
 
               ]
@@ -107,6 +117,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
                 // FloatingActionButton.
                 TextField(
                   focusNode: myFocusNode,
+                  controller: descriptionController,
                 ),
               ]
             )
@@ -116,7 +127,8 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
       floatingActionButton: FloatingActionButton(
         // When the button is pressed,
         // give focus to the text field using myFocusNode.
-        onPressed: () => FocusScope.of(context).requestFocus(myFocusNode),
+        onPressed: () => handleSubmit(titleController.text, 
+         descriptionController.text),
         tooltip: 'Focus Second Text Field',
         child: Icon(Icons.edit),
       ), // This trailing comma makes auto-formatting nicer for build methods.
