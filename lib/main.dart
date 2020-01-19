@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_demo/addContact.dart';
 import 'package:flutter_chat_demo/chat.dart';
 import 'package:flutter_chat_demo/const.dart';
 import 'package:flutter_chat_demo/login.dart';
@@ -15,29 +16,37 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'groupManager.dart';
+import 'groups.dart';
+
 void main() => runApp(MyApp());
 
 class MainScreen extends StatefulWidget {
   final String currentUserId;
+  final bool inByGoogle;
 
-  MainScreen({Key key, @required this.currentUserId}) : super(key: key);
+  MainScreen({Key key, @required this.currentUserId, this.inByGoogle}) : super(key: key);
 
   @override
-  State createState() => MainScreenState(currentUserId: currentUserId);
+  State createState() => MainScreenState(currentUserId: currentUserId, inByGoogle: inByGoogle);
 }
 
 class MainScreenState extends State<MainScreen> {
-  MainScreenState({Key key, @required this.currentUserId});
+  MainScreenState({Key key, @required this.currentUserId, this.inByGoogle});
 
   final String currentUserId;
+  final bool inByGoogle;
   final FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
+    const Choice(title: 'Add Contact', icon: Icons.contacts),
     const Choice(title: 'Settings', icon: Icons.settings),
+    const Choice(title: 'Groups', icon: Icons.group),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
+    const Choice(title: 'Create Group', icon: Icons.create),
   ];
 
   @override
@@ -51,14 +60,14 @@ class MainScreenState extends State<MainScreen> {
     firebaseMessaging.requestNotificationPermissions();
 
     firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
-      print('onMessage: $message');
+      // print('onMessage: $message');
       showNotification(message['notification']);
       return;
     }, onResume: (Map<String, dynamic> message) {
-      print('onResume: $message');
+      // print('onResume: $message');
       return;
     }, onLaunch: (Map<String, dynamic> message) {
-      print('onLaunch: $message');
+      // print('onLaunch: $message');
       return;
     });
 
@@ -78,29 +87,58 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void onItemMenuPress(Choice choice) {
-    if (choice.title == 'Log out') {
+    switch (choice.title) {
+      case 'Create Group':
+      {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => GroupManager()));
+      break;
+      }
+      case 'Groups':
+      {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Groups()));
+      break;
+      }
+      case 'Log out':
+      {
       handleSignOut();
-    } else {
+      break;
+      } 
+      case 'Add Contact': {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AddContact()));
+      break;
+      }
+      
+      case 'Settings':
+      {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+      break;
+      }
     }
   }
 
   void showNotification(message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.NUSAnonymous.NUSAnonymous': 'com.duytq.flutterchatdemo',
+      Platform.isAndroid ? 'com.NUSAnonymous.NUSAnonymous': 'com.hacknroll.example.anonymousappios',
       'AnonyNUS Chat',
       'A message has arrived!',
       playSound: true,
       enableVibration: true,
       importance: Importance.Max,
       priority: Priority.High,
+      channelShowBadge: true, 
+      enableLights: true
     );
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true
+    );
     var platformChannelSpecifics =
         new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, message['title'].toString(), message['body'].toString(), platformChannelSpecifics,
-        payload: json.encode(message));
+        payload: 'Alert');
+        //json.encode(message)
   }
 
   Future<bool> onBackPress() {
@@ -128,7 +166,7 @@ class MainScreenState extends State<MainScreen> {
                         size: 30.0,
                         color: Colors.white,
                       ),
-                      margin: EdgeInsets.only(bottom: 10.0),
+                      margin: EdgeInsets.only(bottom: 9.0),
                     ),
                     Text(
                       'Exit app',
@@ -198,8 +236,10 @@ class MainScreenState extends State<MainScreen> {
     });
 
     await FirebaseAuth.instance.signOut();
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
+    if (inByGoogle) {
+      await googleSignIn.disconnect();
+      await googleSignIn.signOut();
+    }
 
     this.setState(() {
       isLoading = false;
@@ -214,7 +254,7 @@ class MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'ROOMS',
+          'FRIENDS',
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -262,8 +302,16 @@ class MainScreenState extends State<MainScreen> {
                   } else {
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data.documents[index]),
-                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) => buildItem(context, User(
+                        aboutMe: snapshot.data.documents[0].data['contacts'][index]['aboutMe'],
+                        photoUrl: snapshot.data.documents[0].data['contacts'][index]['photoUrl'],
+                        nickname: snapshot.data.documents[0].data['contacts'][index]['nickname'],
+                        id: snapshot.data.documents[0].data['contacts'][index]['id'],
+                        chattingWith: snapshot.data.documents[0].data['contacts'][index]['chattingWith'],
+                        createdAt: snapshot.data.documents[0].data['contacts'][index]['createdAt'],
+                        pushToken: snapshot.data.documents[0].data['contacts'][index]['pushToken']
+                      )),
+                      itemCount: snapshot.data.documents[0].data['contacts'].isNotEmpty ? snapshot.data.documents[0].data['contacts'].length : 0,
                     );
                   }
                 },
@@ -288,8 +336,8 @@ class MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot document) {
-    if (document['id'] == currentUserId) {
+  Widget buildItem(BuildContext context, User contact) {
+    if (contact == null) {
       return Container();
     } else {
       return Container(
@@ -297,7 +345,7 @@ class MainScreenState extends State<MainScreen> {
           child: Row(
             children: <Widget>[
               Material(
-                child: document['photoUrl'] != null
+                child: contact.photoUrl != ''
                     ? CachedNetworkImage(
                         placeholder: (context, url) => Container(
                           child: CircularProgressIndicator(
@@ -308,7 +356,7 @@ class MainScreenState extends State<MainScreen> {
                           height: 50.0,
                           padding: EdgeInsets.all(15.0),
                         ),
-                        imageUrl: document['photoUrl'],
+                        imageUrl: contact.photoUrl,
                         width: 50.0,
                         height: 50.0,
                         fit: BoxFit.cover,
@@ -327,7 +375,7 @@ class MainScreenState extends State<MainScreen> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          'Nickname: ${document['nickname']}',
+                          'Nickname: ${contact.nickname}',
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,
@@ -335,7 +383,7 @@ class MainScreenState extends State<MainScreen> {
                       ),
                       Container(
                         child: Text(
-                          'About me: ${document['aboutMe'] ?? 'Not available'}',
+                          'About me: ${contact.aboutMe ?? ':)'}',
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,
@@ -353,8 +401,8 @@ class MainScreenState extends State<MainScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => Chat(
-                          peerId: document.documentID,
-                          peerAvatar: document['photoUrl'],
+                          peerId: contact.id,
+                          peerAvatar: contact.photoUrl,
                         )));
           },
           color: greyColor2,
@@ -372,4 +420,20 @@ class Choice {
 
   final String title;
   final IconData icon;
+}
+
+class User {
+  const User({
+      this.aboutMe, this.photoUrl, this.nickname, this.id, this.chattingWith, 
+      this.pushToken, this.createdAt, this.contacts
+    });
+
+  final String aboutMe;
+  final String photoUrl;
+  final String nickname;
+  final String id;
+  final String chattingWith;
+  final String createdAt;
+  final String pushToken;
+  final List<User> contacts;
 }

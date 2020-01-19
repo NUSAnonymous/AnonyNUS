@@ -12,11 +12,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Chat extends StatelessWidget {
-  final String peerId;
-  final String peerAvatar;
+class GroupChat extends StatelessWidget {
+  final String groupID;
 
-  Chat({Key key, @required this.peerId, @required this.peerAvatar}) : super(key: key);
+  GroupChat({Key key, @required this.groupID}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,28 +27,26 @@ class Chat extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: new ChatScreen(
-        peerId: peerId,
-        peerAvatar: peerAvatar,
+      body: new GroupChatScreen(
+        groupId: groupID,
       ),
     );
   }
 }
 
-class ChatScreen extends StatefulWidget {
-  final String peerId;
-  final String peerAvatar;
+class GroupChatScreen extends StatefulWidget {
+  final String groupId;
 
-  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar}) : super(key: key);
+  GroupChatScreen({Key key, @required this.groupId}) : super(key: key);
 
   @override
-  State createState() => new ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
+  State createState() => new GroupChatScreenState(groupId: groupId);
 }
 
-class ChatScreenState extends State<ChatScreen> {
-  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar});
+class GroupChatScreenState extends State<GroupChatScreen> {
+  GroupChatScreenState({Key key, @required this.groupId});
 
-  String peerId;
+  String groupId;
   String peerAvatar;
   String id;
 
@@ -92,13 +89,13 @@ class ChatScreenState extends State<ChatScreen> {
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString('id') ?? '';
-    if (id.hashCode <= peerId.hashCode) {
-      groupChatId = '$id-$peerId';
+    if (id.hashCode <= groupId.hashCode) {
+      groupChatId = '$id-$groupId';
     } else {
-      groupChatId = '$peerId-$id';
+      groupChatId = '$groupId-$id';
     }
 
-    Firestore.instance.collection('users').document(id).updateData({'chattingWith': peerId});
+    Firestore.instance.collection('users').document(id).updateData({'chattingWith': groupId});
 
     setState(() {});
   }
@@ -157,7 +154,7 @@ class ChatScreenState extends State<ChatScreen> {
           documentReference,
           {
             'idFrom': id,
-            'idTo': peerId,
+            'idTo': groupId,
             'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
             'content': content,
             'type': type
