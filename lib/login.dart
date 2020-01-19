@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_demo/const.dart';
 import 'package:flutter_chat_demo/main.dart';
+import 'package:flutter_chat_demo/services/authentication.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import './login_signup_page.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,25 +19,34 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: themeColor,
       ),
-      home: LoginScreen(title: 'SIGN IN'),
+      home: LoginScreen(title: 'Welcome to AnonyNUS', auth: new Auth()),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key key, this.title}) : super(key: key);
+  LoginScreen({Key key, this.title, this.auth}) : super(key: key);
 
   final String title;
+  final BaseAuth auth;
 
   @override
   LoginScreenState createState() => LoginScreenState();
+}
+
+enum AuthStatus {
+  NOT_DETERMINED,
+  NOT_LOGGED_IN,
+  LOGGED_IN,
 }
 
 class LoginScreenState extends State<LoginScreen> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SharedPreferences prefs;
+  AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
+  String _userId = "";
 
   bool isLoading = false;
   bool isLoggedIn = false;
@@ -45,6 +56,26 @@ class LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     isSignedIn();
+    widget.auth.getCurrentUser().then((user) {
+      setState(() {
+        if (user != null) {
+          _userId = user?.uid;
+        }
+        authStatus =
+            user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+      });
+    });
+  }
+
+  void _onLoggedIn() {
+    widget.auth.getCurrentUser().then((user){
+      setState(() {
+        _userId = user.uid.toString();
+      });
+    });
+    setState(() {
+      authStatus = AuthStatus.LOGGED_IN;
+    });
   }
 
   void isSignedIn() async {
@@ -116,13 +147,24 @@ class LoginScreenState extends State<LoginScreen> {
         isLoading = false;
       });
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen(currentUserId: firebaseUser.uid)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen(
+        currentUserId: firebaseUser.uid,
+        inByGoogle: true
+        )));
     } else {
       Fluttertoast.showToast(msg: "Sign in fail");
       this.setState(() {
         isLoading = false;
       });
     }
+  }
+
+  void handleSignInLocal() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginSignUpPage(
+        auth: widget.auth,
+        onSignedIn: _onLoggedIn,
+      )
+    ));
   }
 
   @override
@@ -138,17 +180,47 @@ class LoginScreenState extends State<LoginScreen> {
         body: Stack(
           children: <Widget>[
             Center(
-              child: FlatButton(
-                  onPressed: handleSignIn,
-                  child: Text(
-                    'SIGN IN WITH GOOGLE',
-                    style: TextStyle(fontSize: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image(image: AssetImage('images/logo2.png')),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 100),
+                    child: Text('AnonyNUS is an online chat platform for NUS students from the same modules/courses to share resources, discuss work and make friends anonymously.',
+                    style: TextStyle(fontSize: 17, color: Colors.black.withOpacity(0.8)))
                   ),
-                  color: Color(0xffdd4b39),
-                  highlightColor: Color(0xffff7f7f),
-                  splashColor: Colors.transparent,
-                  textColor: Colors.white,
-                  padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0)),
+                  FlatButton(
+                    onPressed: handleSignIn,
+                    child: Text(
+                      'SIGN IN WITH GOOGLE',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    color: Color(0xffdd4b39),
+                    highlightColor: Color(0xffff7f7f),
+                    splashColor: Colors.transparent,
+                    textColor: Colors.white,
+                    padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0)
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    child: Text('OR',
+                    style: TextStyle(fontSize: 22))
+                  ),
+                  FlatButton(
+                    onPressed: handleSignInLocal,
+                    child: Text(
+                      'SIGN IN WITH PASSWORD',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    color: Color(0xff004696),
+                    highlightColor: Color(0xffff7f7f),
+                    splashColor: Colors.transparent,
+                    textColor: Colors.white,
+                    padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0)
+                  ),
+                ]
+              ),
             ),
 
             // Loading
