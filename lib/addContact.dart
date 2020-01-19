@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_demo/chat.dart';
 import 'package:flutter_chat_demo/const.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -115,20 +116,68 @@ class AddContactScreenState extends State<AddContactScreen> {
   //   });
   // }
 
-  void handleUpdateData() {
+  void handleUpdateData() async {
     focusNodeNickname.unfocus();
 
     setState(() {
       isLoading = true;
     });
 
-    // var contact = Firestone.instance.collections('users');
+    final QuerySnapshot result =
+              await Firestore.instance.collection('users').where('nickname', isEqualTo: nickname).getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.isNotEmpty) {
+      // Update data to server if new user
+      var peerId = documents[0].data["id"];
+      var peerAvatar = documents[0].data["photoUrl"];
 
+      var myResult = await Firestore.instance.collection('users').document(id).get();
+      var myContacts = myResult['contacts'];
 
-    // Firestore.instance
-    //           .collection('users')
-    //           .document(id)
-    //           .updateData({'nickname': nickname, 'aboutMe': aboutMe, 'photoUrl': photoUrl})
+      // Add to contact of id 
+      if (myContacts == null) {
+        Firestore.instance.collection('users').document(id).updateData({
+          'chattingWith': peerId, 
+          'contacts': [peerId]
+        });
+      } else {
+        if (!myContacts.contains(peerId)) {
+          var copyContacts = new List<String>.from(myContacts);
+          copyContacts.add(peerId);
+          print(copyContacts);
+          Firestore.instance.collection('users').document(id).updateData({
+            'chattingWith': peerId, 
+            'contacts': copyContacts
+          });
+        }
+      }
+
+      // Add to contacts of peer
+      var peerContacts = documents[0].data["contacts"];
+      if (peerContacts == null) {
+        Firestore.instance.collection('users').document(peerId).updateData({
+          'chattingWith': id, 
+          'contacts': [id]
+        });
+      } else {
+        if (!peerContacts.contains(id)) {
+          var copyContacts = new List<String>.from(peerContacts);
+          copyContacts.add(id);
+          print(copyContacts);
+          Firestore.instance.collection('users').document(peerId).updateData({
+            'chattingWith': id, 
+            'contacts': copyContacts
+          });
+        }
+      }
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(
+        peerId: peerId,
+        peerAvatar: peerAvatar,
+      )));
+    } else {
+      Fluttertoast.showToast(msg: "No such person found.");
+    }
 
       setState(() {
         isLoading = false;
@@ -182,7 +231,7 @@ class AddContactScreenState extends State<AddContactScreen> {
                 child: FlatButton(
                   onPressed: handleUpdateData,
                   child: Text(
-                    'UPDATE',
+                    'ADD',
                     style: TextStyle(fontSize: 16.0),
                   ),
                   color: primaryColor,
