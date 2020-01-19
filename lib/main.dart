@@ -42,8 +42,8 @@ class MainScreenState extends State<MainScreen> {
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
     const Choice(title: 'Add Contact', icon: Icons.contacts),
-    const Choice(title: 'Groups', icon: Icons.group),
-    const Choice(title: 'Create Group', icon: Icons.create),
+    const Choice(title: 'My Groups', icon: Icons.group),
+    const Choice(title: 'Add Group', icon: Icons.create),
     const Choice(title: 'Settings', icon: Icons.settings),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
   ];
@@ -89,28 +89,30 @@ class MainScreenState extends State<MainScreen> {
     switch (choice.title) {
       case 'Add Contact': {
       Navigator.push(context, MaterialPageRoute(builder: (context) => AddContact()));
-      break;
       }
+      break;
       case 'Add Group':
       {
       Navigator.push(context, MaterialPageRoute(builder: (context) => GroupManager()));
-      break;
       }
+      break;
       case 'My Groups':
       {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Groups()));
-      break;
       }
+      break;
       case 'Settings':
       {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-      break;
       }
+      break;
       case 'Log out':
       {
       handleSignOut();
-      break;
       } 
+      break;
+      default: {}
+      break;
     }
   }
 
