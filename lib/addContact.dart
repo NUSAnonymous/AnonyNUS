@@ -176,6 +176,8 @@ class AddContactScreenState extends State<AddContactScreen> {
         peerId: peerId,
         peerAvatar: peerAvatar,
       )));
+
+      Fluttertoast.showToast(msg: "Added success");
     } else {
       Fluttertoast.showToast(msg: "No such person found.");
     }
@@ -183,8 +185,6 @@ class AddContactScreenState extends State<AddContactScreen> {
       setState(() {
         isLoading = false;
       });
-
-      Fluttertoast.showToast(msg: "Added success");
     }
 
   @override
