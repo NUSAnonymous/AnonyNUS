@@ -229,7 +229,7 @@ class MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'ROOMS',
+          'FRIENDS',
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -277,8 +277,16 @@ class MainScreenState extends State<MainScreen> {
                   } else {
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data.documents[index]),
-                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) => buildItem(context, User(
+                        aboutMe: snapshot.data.documents[0].data['contacts'][index]['aboutMe'],
+                        photoUrl: snapshot.data.documents[0].data['contacts'][index]['photoUrl'],
+                        nickname: snapshot.data.documents[0].data['contacts'][index]['nickname'],
+                        id: snapshot.data.documents[0].data['contacts'][index]['id'],
+                        chattingWith: snapshot.data.documents[0].data['contacts'][index]['chattingWith'],
+                        createdAt: snapshot.data.documents[0].data['contacts'][index]['createdAt'],
+                        pushToken: snapshot.data.documents[0].data['contacts'][index]['pushToken']
+                      )),
+                      itemCount: snapshot.data.documents[0].data['contacts'].isNotEmpty ? snapshot.data.documents[0].data['contacts'].length : 0,
                     );
                   }
                 },
@@ -303,8 +311,8 @@ class MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot document) {
-    if (document['id'] == currentUserId) {
+  Widget buildItem(BuildContext context, User contact) {
+    if (contact == null) {
       return Container();
     } else {
       return Container(
@@ -312,7 +320,7 @@ class MainScreenState extends State<MainScreen> {
           child: Row(
             children: <Widget>[
               Material(
-                child: document['photoUrl'] != ''
+                child: contact.photoUrl != ''
                     ? CachedNetworkImage(
                         placeholder: (context, url) => Container(
                           child: CircularProgressIndicator(
@@ -323,7 +331,7 @@ class MainScreenState extends State<MainScreen> {
                           height: 50.0,
                           padding: EdgeInsets.all(15.0),
                         ),
-                        imageUrl: document['photoUrl'],
+                        imageUrl: contact.photoUrl,
                         width: 50.0,
                         height: 50.0,
                         fit: BoxFit.cover,
@@ -342,7 +350,7 @@ class MainScreenState extends State<MainScreen> {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          'Nickname: ${document['nickname']}',
+                          'Nickname: ${contact.nickname}',
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,
@@ -350,7 +358,7 @@ class MainScreenState extends State<MainScreen> {
                       ),
                       Container(
                         child: Text(
-                          'About me: ${document['aboutMe'] ?? ':)'}',
+                          'About me: ${contact.aboutMe ?? ':)'}',
                           style: TextStyle(color: primaryColor),
                         ),
                         alignment: Alignment.centerLeft,
@@ -368,8 +376,8 @@ class MainScreenState extends State<MainScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => Chat(
-                          peerId: document.documentID,
-                          peerAvatar: document['photoUrl'],
+                          peerId: contact.id,
+                          peerAvatar: contact.photoUrl,
                         )));
           },
           color: greyColor2,
@@ -387,4 +395,20 @@ class Choice {
 
   final String title;
   final IconData icon;
+}
+
+class User {
+  const User({
+      this.aboutMe, this.photoUrl, this.nickname, this.id, this.chattingWith, 
+      this.pushToken, this.createdAt, this.contacts
+    });
+
+  final String aboutMe;
+  final String photoUrl;
+  final String nickname;
+  final String id;
+  final String chattingWith;
+  final String createdAt;
+  final String pushToken;
+  final List<User> contacts;
 }

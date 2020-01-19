@@ -126,24 +126,25 @@ class AddContactScreenState extends State<AddContactScreen> {
     final QuerySnapshot result =
               await Firestore.instance.collection('users').where('nickname', isEqualTo: nickname).getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
+    var myResult = await Firestore.instance.collection('users').document(id).get();
     if (documents.isNotEmpty) {
       // Update data to server if new user
+      var peer = documents[0].data;
       var peerId = documents[0].data["id"];
       var peerAvatar = documents[0].data["photoUrl"];
 
-      var myResult = await Firestore.instance.collection('users').document(id).get();
       var myContacts = myResult['contacts'];
 
       // Add to contact of id 
       if (myContacts == null) {
         Firestore.instance.collection('users').document(id).updateData({
           'chattingWith': peerId, 
-          'contacts': [peerId]
+          'contacts': [peer]
         });
       } else {
-        if (!myContacts.contains(peerId)) {
-          var copyContacts = new List<String>.from(myContacts);
-          copyContacts.add(peerId);
+        if (!myContacts.contains(documents[0].data)) {
+          var copyContacts = new List.from(myContacts);
+          copyContacts.add(peer);
           print(copyContacts);
           Firestore.instance.collection('users').document(id).updateData({
             'chattingWith': peerId, 
@@ -157,12 +158,12 @@ class AddContactScreenState extends State<AddContactScreen> {
       if (peerContacts == null) {
         Firestore.instance.collection('users').document(peerId).updateData({
           'chattingWith': id, 
-          'contacts': [id]
+          'contacts': [myResult]
         });
       } else {
         if (!peerContacts.contains(id)) {
-          var copyContacts = new List<String>.from(peerContacts);
-          copyContacts.add(id);
+          var copyContacts = new List.from(peerContacts);
+          copyContacts.add(myResult);
           print(copyContacts);
           Firestore.instance.collection('users').document(peerId).updateData({
             'chattingWith': id, 
