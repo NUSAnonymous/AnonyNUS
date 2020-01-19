@@ -34,11 +34,25 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   // Check if form is valid before perform login or signup
   bool _validateAndSave() {
     final form = _formKey.currentState;
+
     if (form.validate()) {
       form.save();
       return true;
     }
     return false;
+  }
+
+  bool _checkvalidEmail() {
+    final nusEmail = RegExp(r'^[a-zA-Z0-9]+@u.nus.edu$');
+
+    if (!nusEmail.hasMatch(_email)) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = "Invalid email, please use NUS email";
+      });
+      return false;
+    }
+    return true;
   }
 
   // Perform login or signup
@@ -47,7 +61,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       _errorMessage = "";
       _isLoading = true;
     });
-    if (_validateAndSave()) {
+    if (_validateAndSave() && _checkvalidEmail()) {
       String userId = "";
       try {
         if (_formMode == FormMode.LOGIN) {
@@ -149,6 +163,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return new Scaffold(
         appBar: new AppBar(
           title: new Text(_formMode == FormMode.LOGIN ? 'Login' : 'Sign Up'),
+          centerTitle: true,
         ),
         body: Stack(
           children: <Widget>[
@@ -196,6 +211,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             shrinkWrap: true,
             children: <Widget>[
               _showLogo(),
+              _showText(),
               _showEmailInput(),
               _showPasswordInput(),
               _showPrimaryButton(),
@@ -231,7 +247,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 48.0,
-          child: Image.asset('assets/images/logo.png'),
+          child: Container(),
         ),
       ),
     );
@@ -275,7 +291,17 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     );
   }
 
- 
+  Widget _showText() {
+    return new Padding(
+      padding: const EdgeInsets.fromLTRB(5, 0, 5, 5),
+      child: _formMode == FormMode.LOGIN
+          ? new Text('Log in to chat anonymously with others!',
+              style: new TextStyle(fontSize: 18.0))
+          : new Text('Sign up to chat anonymously with others!',
+              style:
+                  new TextStyle(fontSize: 18.0)),
+    );
+  }
 
   Widget _showSecondaryButton() {
     return new FlatButton(
@@ -299,7 +325,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           child: new RaisedButton(
             elevation: 5.0,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.blue,
+            color: Color(0xff004696),
             child: _formMode == FormMode.LOGIN
                 ? new Text('Login',
                     style: new TextStyle(fontSize: 20.0, color: Colors.white))
