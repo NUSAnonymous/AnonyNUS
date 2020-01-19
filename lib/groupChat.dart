@@ -22,7 +22,7 @@ class GroupChat extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(
-          'CHAT',
+          'GROUP CHAT',
           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -90,9 +90,9 @@ class GroupChatScreenState extends State<GroupChatScreen> {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString('id') ?? '';
     if (id.hashCode <= groupId.hashCode) {
-      groupChatId = '$id-$groupId';
+      groupChatId = '$groupId';
     } else {
-      groupChatId = '$groupId-$id';
+      groupChatId = '$groupId';
     }
 
     Firestore.instance.collection('users').document(id).updateData({'chattingWith': groupId});
@@ -107,7 +107,7 @@ class GroupChatScreenState extends State<GroupChatScreen> {
       setState(() {
         isLoading = true;
       });
-      uploadFile();
+      // uploadFile();
     }
   }
 
@@ -119,24 +119,24 @@ class GroupChatScreenState extends State<GroupChatScreen> {
     });
   }
 
-  Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-      imageUrl = downloadUrl;
-      setState(() {
-        isLoading = false;
-        onSendMessage(imageUrl, 1);
-      });
-    }, onError: (err) {
-      setState(() {
-        isLoading = false;
-      });
-      Fluttertoast.showToast(msg: 'This file is not an image');
-    });
-  }
+  // Future uploadFile() async {
+  //   String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  //   StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
+  //   StorageUploadTask uploadTask = reference.putFile(imageFile);
+  //   StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+  //   storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+  //     imageUrl = downloadUrl;
+  //     setState(() {
+  //       isLoading = false;
+  //       onSendMessage(imageUrl, 1);
+  //     });
+  //   }, onError: (err) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     Fluttertoast.showToast(msg: 'This file is not an image');
+  //   });
+  // }
 
   void onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker
@@ -216,7 +216,7 @@ class GroupChatScreenState extends State<GroupChatScreen> {
                               ),
                               clipBehavior: Clip.hardEdge,
                             ),
-                            imageUrl: document['content'],
+                            imageUrl: 'images/img_not_available.jpeg',
                             width: 200.0,
                             height: 200.0,
                             fit: BoxFit.cover,
@@ -235,7 +235,7 @@ class GroupChatScreenState extends State<GroupChatScreen> {
                   // Sticker
                   : Container(
                       child: new Image.asset(
-                        'images/${document['content']}.gif',
+                        'images/img_not_available.jpeg',
                         width: 100.0,
                         height: 100.0,
                         fit: BoxFit.cover,
@@ -254,23 +254,7 @@ class GroupChatScreenState extends State<GroupChatScreen> {
               children: <Widget>[
                 isLastMessageLeft(index)
                     ? Material(
-                        child: peerAvatar != '' 
-                          ? CachedNetworkImage(
-                            placeholder: (context, url) => Container(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1.0,
-                                valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                              ),
-                              width: 35.0,
-                              height: 35.0,
-                              padding: EdgeInsets.all(10.0),
-                            ),
-                            imageUrl: peerAvatar,
-                            width: 35.0,
-                            height: 35.0,
-                            fit: BoxFit.cover,
-                          )
-                        : Icon(
+                        child: Icon(
                             Icons.account_circle,
                             size: 50.0,
                             color: greyColor,
