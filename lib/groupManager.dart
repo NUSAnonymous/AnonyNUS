@@ -1,5 +1,4 @@
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -143,12 +142,42 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
       floatingActionButton: FloatingActionButton.extended(
         // When the button is pressed,
         // give focus to the text field using myFocusNode.
-        onPressed: () => handleSubmit(titleController.text, 
+        onPressed: () => handleUpdateData(titleController.text, 
          descriptionController.text),
         tooltip: 'Focus Second Text Field',
         icon: Icon(Icons.edit),
         label: Text("Add Group")
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  final FocusNode titleFocusNode = new FocusNode();
+  final FocusNode descriptionFocusNode = new FocusNode();
+
+   Future handleUpdateData(String title, String description) async {
+    final QuerySnapshot result = await Future.value(Firestore.instance
+    .collection("groups")
+    .where("title", isEqualTo: "$title")
+    .limit(1)
+    .getDocuments());
+    final List<DocumentSnapshot> documents = result.documents;
+    if (documents.length > 0) {
+      Fluttertoast.showToast(msg: "Group title already exists!");
+    } else {
+      titleFocusNode.unfocus();
+      descriptionFocusNode.unfocus();
+      Firestore.instance.collection('groups').document()
+        .setData({ 'title': title, 'description': description })
+        .then((data) async {
+        Fluttertoast.showToast(msg: "Group creation success!");
+      });
+
+    }
+
+    // Firestore.instance
+    //     .collection('users')
+    //     .document(id)
+    //     .updateData({'nickname': nickname, 'aboutMe': aboutMe, 'photoUrl': photoUrl}).then((data) async {
+
   }
 }
