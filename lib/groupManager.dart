@@ -93,7 +93,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
 
   void handleSubmit(String title, String description) {
     if (_validated(title)) {
-      Firestore.instance.collection('groups').document()
+      Firestore.instance.collection('groups').document(title)
       .setData({ 'title': title, 'description': description });
       Fluttertoast.showToast(msg: "Group Created");
       Navigator.pop(context);
@@ -116,7 +116,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
               padding: const EdgeInsets.fromLTRB(10, 150.0, 10, 0.0),
               child: TextField(
                 decoration: new InputDecoration(
-                  labelText: "Group Title",
+                  labelText: "Group Name",
                   hintText: "CS1101S",
                 ),
                 autofocus: true,
@@ -166,7 +166,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
     } else {
       titleFocusNode.unfocus();
       descriptionFocusNode.unfocus();
-      Firestore.instance.collection('groups').document()
+      Firestore.instance.collection('groups').document(title)
         .setData({ 'title': title, 'description': description })
         .then((data) async {
         Fluttertoast.showToast(msg: "Group creation success!");
