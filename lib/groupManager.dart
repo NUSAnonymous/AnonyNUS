@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'const.dart';
 
@@ -84,9 +85,23 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
     super.dispose();
   }
 
+  bool _validated(title) {
+    if (title == '') {
+      return false;
+    }
+    return true;
+  }
+
   void handleSubmit(String title, String description) {
-    Firestore.instance.collection('groups').document()
-    .setData({ 'title': title, 'description': description });
+    if (_validated(title)) {
+      Firestore.instance.collection('groups').document()
+      .setData({ 'title': title, 'description': description });
+      Fluttertoast.showToast(msg: "Group Created");
+      Navigator.pop(context);
+    }
+    else {
+      Fluttertoast.showToast(msg: "Error unable to add group, ensure title is not empty");
+    }
   }
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -98,39 +113,41 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Column(
-              children: [
-                Text("Group Title"),
-                // The first text field is focused on as soon as the app starts.
-                TextField(
-                  autofocus: true,
-                  controller: titleController
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 150.0, 10, 0.0),
+              child: TextField(
+                decoration: new InputDecoration(
+                  labelText: "Group Title",
+                  hintText: "CS1101S",
                 ),
-
-              ]
-
+                autofocus: true,
+                controller: titleController
+              ),
             ),
-            Column(
-              children: [
-                Text("Group Description"),
-                // The second text field is focused on when a user taps the
-                // FloatingActionButton.
-                TextField(
-                  focusNode: myFocusNode,
-                  controller: descriptionController,
+            // The second text field is focused on when a user taps the
+            // FloatingActionButton.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 25.0, 10, 0.0),
+              child: TextField(
+                decoration: new InputDecoration(
+                  labelText: "Group Description",
+                  hintText: "Programming Methodology",
                 ),
-              ]
-            )
+                focusNode: myFocusNode,
+                controller: descriptionController,
+              ),
+            ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         // When the button is pressed,
         // give focus to the text field using myFocusNode.
         onPressed: () => handleSubmit(titleController.text, 
          descriptionController.text),
         tooltip: 'Focus Second Text Field',
-        child: Icon(Icons.edit),
+        icon: Icon(Icons.edit),
+        label: Text("Add Group")
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
