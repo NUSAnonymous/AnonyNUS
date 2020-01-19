@@ -298,18 +298,20 @@ class MainScreenState extends State<MainScreen> {
                       ),
                     );
                   } else {
+                    final int userIndex = snapshot.data.documents.indexWhere((doc) => doc.data['id'] == currentUserId);
+                    var userContacts = snapshot.data.documents[userIndex].data['contacts'];
                     return ListView.builder(
                       padding: EdgeInsets.all(10.0),
                       itemBuilder: (context, index) => buildItem(context, User(
-                        aboutMe: snapshot.data.documents[0].data['contacts'][index]['aboutMe'],
-                        photoUrl: snapshot.data.documents[0].data['contacts'][index]['photoUrl'],
-                        nickname: snapshot.data.documents[0].data['contacts'][index]['nickname'],
-                        id: snapshot.data.documents[0].data['contacts'][index]['id'],
-                        chattingWith: snapshot.data.documents[0].data['contacts'][index]['chattingWith'],
-                        createdAt: snapshot.data.documents[0].data['contacts'][index]['createdAt'],
-                        pushToken: snapshot.data.documents[0].data['contacts'][index]['pushToken']
+                        aboutMe: userContacts[index]['aboutMe'],
+                        photoUrl: userContacts[index]['photoUrl'],
+                        nickname: userContacts[index]['nickname'],
+                        id: userContacts[index]['id'],
+                        chattingWith: userContacts[index]['chattingWith'],
+                        createdAt: userContacts[index]['createdAt'],
+                        pushToken: userContacts[index]['pushToken']
                       )),
-                      itemCount: snapshot.data.documents[0].data['contacts'].isNotEmpty ? snapshot.data.documents[0].data['contacts'].length : 0,
+                      itemCount: userContacts != null ? userContacts.length : 0,
                     );
                   }
                 },
