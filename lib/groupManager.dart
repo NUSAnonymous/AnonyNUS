@@ -170,7 +170,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
         .then((data) async {
         Fluttertoast.showToast(msg: "Group creation success!");
       });
-
+      Navigator.pop(context);
     }
 
     // Firestore.instance
