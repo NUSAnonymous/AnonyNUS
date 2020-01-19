@@ -43,10 +43,10 @@ class MainScreenState extends State<MainScreen> {
   bool isLoading = false;
   List<Choice> choices = const <Choice>[
     const Choice(title: 'Add Contact', icon: Icons.contacts),
-    const Choice(title: 'Settings', icon: Icons.settings),
     const Choice(title: 'Groups', icon: Icons.group),
-    const Choice(title: 'Log out', icon: Icons.exit_to_app),
     const Choice(title: 'Create Group', icon: Icons.create),
+    const Choice(title: 'Settings', icon: Icons.settings),
+    const Choice(title: 'Log out', icon: Icons.exit_to_app),
   ];
 
   @override
