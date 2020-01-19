@@ -88,14 +88,23 @@ class MainScreenState extends State<MainScreen> {
 
   void onItemMenuPress(Choice choice) {
     switch (choice.title) {
-      case 'Create Group':
+      case 'Add Contact': {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AddContact()));
+      break;
+      }
+      case 'Add Group':
       {
       Navigator.push(context, MaterialPageRoute(builder: (context) => GroupManager()));
       break;
       }
-      case 'Groups':
+      case 'My Groups':
       {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Groups()));
+      break;
+      }
+      case 'Settings':
+      {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
       break;
       }
       case 'Log out':
@@ -103,16 +112,6 @@ class MainScreenState extends State<MainScreen> {
       handleSignOut();
       break;
       } 
-      case 'Add Contact': {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => AddContact()));
-      break;
-      }
-      
-      case 'Settings':
-      {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-      break;
-      }
     }
   }
 
