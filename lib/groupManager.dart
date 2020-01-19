@@ -85,7 +85,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
   }
 
   void handleSubmit(String title, String description) {
-    Firestore.instance.collection('groups').document()
+    Firestore.instance.collection('groups').document(title)
     .setData({ 'title': title, 'description': description });
   }
   final titleController = TextEditingController();
@@ -100,7 +100,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
           children: [
             Column(
               children: [
-                Text("Group Title"),
+                Text("Group Name"),
                 // The first text field is focused on as soon as the app starts.
                 TextField(
                   autofocus: true,
@@ -150,7 +150,7 @@ class GroupCreateScreenState extends State<GroupCreateScreen> {
     } else {
       titleFocusNode.unfocus();
       descriptionFocusNode.unfocus();
-      Firestore.instance.collection('groups').document()
+      Firestore.instance.collection('groups').document(title)
         .setData({ 'title': title, 'description': description })
         .then((data) async {
         Fluttertoast.showToast(msg: "Group creation success!");

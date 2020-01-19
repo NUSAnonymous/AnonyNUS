@@ -145,7 +145,7 @@ class AddContactScreenState extends State<AddContactScreen> {
         if (!myContacts.contains(documents[0].data)) {
           var copyContacts = new List.from(myContacts);
           copyContacts.add(peer);
-          print(copyContacts);
+          // print(copyContacts);
           Firestore.instance.collection('users').document(id).updateData({
             'chattingWith': peerId, 
             'contacts': copyContacts
@@ -164,7 +164,7 @@ class AddContactScreenState extends State<AddContactScreen> {
         if (!peerContacts.contains(id)) {
           var copyContacts = new List.from(peerContacts);
           copyContacts.add(myResult);
-          print(copyContacts);
+          // print(copyContacts);
           Firestore.instance.collection('users').document(peerId).updateData({
             'chattingWith': id, 
             'contacts': copyContacts

@@ -72,7 +72,7 @@ class MainScreenState extends State<MainScreen> {
     });
 
     firebaseMessaging.getToken().then((token) {
-      print('token: $token');
+      // print('token: $token');
       Firestore.instance.collection('users').document(currentUserId).updateData({'pushToken': token});
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
